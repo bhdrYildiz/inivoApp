@@ -1,69 +1,63 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ProductCard from "./ProductCard";
 import { useState } from "react";
+import Navbar from "./Navbar";
+import { supabase } from "../supaBaseClient";
 
 const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
+  const [products, setProducts] = useState([]);
 
-  const handleSave = () => {
-    // Burada verileri kaydetmek veya başka bir işlem yapmak istediğiniz kodu ekleyebilirsiniz
-    console.log("Product Name:", productName);
-    console.log("Product Price:", productPrice);
+  async function handleSave () {
 
+    try{
+      const {data, error} = await supabase
+      .from("products")
+      .insert({
+        name: productName,
+        price: productPrice
+      })
+      .single()
+      if(error) throw error;
+      window.location.reload();
+    } catch(error){
+      alert(error.message)
+    }
+    
     // Modalı kapat
     setShowModal(false);
   };
 
-  const products = [
-    {
-      id: 1,
-      image: "product-image1.jpg",
-      name: "Product Name 1",
-      price: "$19.99",
-    },
-    {
-      id: 2,
-      image: "product-image2.jpg",
-      name: "Product Name 2",
-      price: "$29.99",
-    },
-    {
-      id: 3,
-      image: "product-image3.jpg",
-      name: "Product Name 3",
-      price: "$39.99",
-    },
-    {
-      id: 3,
-      image: "product-image3.jpg",
-      name: "Product Name 3",
-      price: "$39.99",
-    },
-    {
-      id: 3,
-      image: "product-image3.jpg",
-      name: "Product Name 3",
-      price: "$39.99",
-    },
-    {
-      id: 3,
-      image: "product-image3.jpg",
-      name: "Product Name 3",
-      price: "$39.99",
-    },
-  ];
+  useEffect(() => {
+    getProducts();
+  }, [])
+
+  async function getProducts(){
+    try{
+      const {data, error} = await supabase
+      .from("products")
+      .select("*")
+      if(error) throw error;
+      if(data != null){
+        setProducts(data);
+      }
+    } catch(error){
+      alert(error.message)
+    }
+  }
 
   const handleFilter = () => {
     // Burada filtreleme işlemleri yapılabilir
     alert("Filter clicked!");
   };
 
+  console.log(products)
   return (
     <div className="container mx-auto">
       {/* Navbar */}
-     
+     <Navbar/>
 
       {/* Filtreleme */}
       <div className="flex justify-between py-2 mt-10">
@@ -105,7 +99,7 @@ const Dashboard = () => {
               <input
                 type="text"
                 placeholder="Product Price"
-                value={productPrice}
+                defaultValue={productPrice}
                 onChange={(e) => setProductPrice(e.target.value)}
                 className="border border-gray-300 rounded px-2 py-1 w-auto mb-4 mt-4"
               />
@@ -122,9 +116,9 @@ const Dashboard = () => {
       </div>
 
       {/* Ürün Listesi */}
-      <div className="flex flex-wrap justify-start gap-8">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+      <div className="flex flex-wrap justify-start gap-11">
+      {products.map((product) => (
+          <ProductCard product={product} />
         ))}
       </div>
     </div>
