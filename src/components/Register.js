@@ -2,9 +2,19 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../supaBaseClient";
+import { useDispatch } from "react-redux";
+import { signUps } from "../redux/SignUpSlice";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSignUp = async (values) => {
+
+    dispatch(signUps(values));
+  };
+
   return (
     <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div class="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -23,8 +33,10 @@ const Register = () => {
         })}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
+            handleSignUp(values);
+            //alert(JSON.stringify(values, null, 2));
             setSubmitting(false);
+            //navigate("/");
           }, 400);
         }}
       >

@@ -10,41 +10,43 @@ const Dashboard = () => {
   const [productPrice, setProductPrice] = useState("");
   const [products, setProducts] = useState([]);
 
-  async function handleSave () {
-
-    try{
-      const {data, error} = await supabase
-      .from("products")
-      .insert({
-        name: productName,
-        price: productPrice
-      })
-      .single()
-      if(error) throw error;
+  const halletSunu = async () => {
+    const asdas = await supabase.auth.admin;
+    console.log(asdas);
+  };
+  halletSunu();
+  async function handleSave() {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .insert({
+          name: productName,
+          price: productPrice,
+        })
+        .single();
+      if (error) throw error;
       window.location.reload();
-    } catch(error){
-      alert(error.message)
+    } catch (error) {
+      alert(error.message);
     }
-    
+
     // Modalı kapat
     setShowModal(false);
-  };
+  }
 
   useEffect(() => {
     getProducts();
-  }, [])
+  }, []);
 
-  async function getProducts(){
-    try{
-      const {data, error} = await supabase
-      .from("products")
-      .select("*")
-      if(error) throw error;
-      if(data != null){
+  async function getProducts() {
+    try {
+      const { data, error } = await supabase.from("products").select("*");
+      if (error) throw error;
+      if (data != null) {
         setProducts(data);
       }
-    } catch(error){
-      alert(error.message)
+    } catch (error) {
+      alert(error.message);
     }
   }
 
@@ -53,11 +55,10 @@ const Dashboard = () => {
     alert("Filter clicked!");
   };
 
-  console.log(products)
   return (
     <div className="container mx-auto">
       {/* Navbar */}
-     <Navbar/>
+      <Navbar />
 
       {/* Filtreleme */}
       <div className="flex justify-between py-2 mt-10">
@@ -117,7 +118,7 @@ const Dashboard = () => {
 
       {/* Ürün Listesi */}
       <div className="flex flex-wrap justify-start gap-11">
-      {products.map((product) => (
+        {products.map((product) => (
           <ProductCard product={product} />
         ))}
       </div>
