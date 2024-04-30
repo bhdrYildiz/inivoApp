@@ -12,7 +12,6 @@ const Dashboard = () => {
 
   const halletSunu = async () => {
     const asdas = await supabase.auth.admin;
-    console.log(asdas);
   };
   halletSunu();
   async function handleSave() {

@@ -5,6 +5,16 @@ const initialState = {
   authentication: false,
 };
 
+export const checkAuthentication = createAsyncThunk(
+  "/checkAuthentication",
+  async () => {
+    const session = supabase.auth.session();
+    return {
+      authentication: !!session,
+    };
+  }
+);
+
 export const loginThunk = createAsyncThunk(
   "/loginCheck",
   async ({ email, password }) => {
@@ -40,6 +50,12 @@ const authSlice = createSlice({
         return {
           loading: false,
           error: action.payload.error,
+        };
+      })
+      .addCase(checkAuthentication.fulfilled, (state, action) => {
+        return {
+          ...state,
+          authentication: action.payload.authentication,
         };
       });
   },

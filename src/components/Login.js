@@ -1,17 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { loginThunk, selectAuth } from "../redux/authSlice";
+import { checkAuthentication } from "../redux/authSlice";
+
 const Login = () => {
   const navigate = useNavigate();
   const authState = useSelector(selectAuth);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (authState.authentication) {
+      navigate("/dashboard");
+    }
+  }, [authState.authentication, navigate]);
+
   const handleLogin = async ({ values }) => {
     dispatch(loginThunk({ email: values.email, password: values.password }));
+
+    dispatch(checkAuthentication());
   };
+
   const auth = useSelector((store) => store);
-  console.log(auth);
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
