@@ -4,6 +4,10 @@ import SalesDialog from "./SalesDialog";
 const ProductCard = ({ product }) => {
   const [showSalesDialog, setShowSalesDialog] = useState(false);
 
+  const handleCloseSalesDialog = () => {
+    setShowSalesDialog(false);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-14 mt-8">
       <div className="flex justify-center items-center mx-8"></div>
@@ -17,7 +21,7 @@ const ProductCard = ({ product }) => {
           Add Sale
         </button>
       </div>
-      {showSalesDialog && <SalesDialog product={product} />}
+      {showSalesDialog && <SalesDialog product={product} onClose={handleCloseSalesDialog} />}
     </div>
   );
 };

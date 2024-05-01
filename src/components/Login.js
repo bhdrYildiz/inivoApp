@@ -2,19 +2,20 @@ import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { loginThunk, selectAuth } from "../redux/authSlice";
+import { loginThunk } from "../redux/authSlice";
 import { checkAuthentication } from "../redux/authSlice";
 
-const Login = () => {
+const Login = ({ setToken }) => {
   const navigate = useNavigate();
-  const authState = useSelector(selectAuth);
+  const authState = useSelector((state) => state.auth.authentication);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (authState.authentication) {
+    if (authState) {
+      setToken(authState);
       navigate("/dashboard");
     }
-  }, [authState.authentication, navigate]);
+  }, [authState, navigate, setToken]);
 
   const handleLogin = async ({ values }) => {
     dispatch(loginThunk({ email: values.email, password: values.password }));
@@ -22,13 +23,12 @@ const Login = () => {
     dispatch(checkAuthentication());
   };
 
-  const auth = useSelector((store) => store);
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Register a new account
+          Login
         </h2>
       </div>
       <Formik
@@ -36,6 +36,7 @@ const Login = () => {
           firstName: "",
           lastName: "",
           email: "",
+          password: "",
         }}
         onSubmit={async (values) => {
           handleLogin({ values: values });

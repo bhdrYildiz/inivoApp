@@ -14,9 +14,10 @@ const Dashboard = () => {
     const asdas = await supabase.auth.admin;
   };
   halletSunu();
+
   async function handleSave() {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("products")
         .insert({
           name: productName,
@@ -28,8 +29,7 @@ const Dashboard = () => {
     } catch (error) {
       alert(error.message);
     }
-
-    // Modalı kapat
+    
     setShowModal(false);
   }
 
@@ -48,18 +48,18 @@ const Dashboard = () => {
       alert(error.message);
     }
   }
+  const handleFilter = (e) => {
+    const searchValue = e.target.value.toLowerCase();
 
-  const handleFilter = () => {
-    // Burada filtreleme işlemleri yapılabilir
-    alert("Filter clicked!");
+    const filteredProducts = products.filter((product) =>
+      product.name.toLowerCase().includes(searchValue)
+    );
+    setProducts(filteredProducts);
   };
 
   return (
     <div className="container mx-auto">
-      {/* Navbar */}
       <Navbar />
-
-      {/* Filtreleme */}
       <div className="flex justify-between py-2 mt-10">
         <div className="flex justify-start items-center w-full">
           <div className="mr-2">
@@ -70,7 +70,7 @@ const Dashboard = () => {
               type="text"
               id="filter"
               placeholder="Search products..."
-              className="border border-gray-500 rounded px-4 py-1 pr-8 focus:outline-none focus:border-blue-500 w-auto" // Added w-full for consistent width
+              className="border border-gray-500 rounded px-4 py-1 pr-8 focus:outline-none focus:border-blue-500 w-auto" 
               onChange={handleFilter}
             />
           </div>
@@ -83,11 +83,23 @@ const Dashboard = () => {
         </button>
         {showModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-md w-96 h-80 overflow-y-auto">
-              <h2 className="text-lg font-bold mb-4">
-                Add Product & Edit Product
-              </h2>
-              {/* Product Name Input */}
+            <div className="bg-white p-6 rounded-lg shadow-md w-96 h-80 overflow-y-auto relative">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold">
+                  Add Product & Edit Product
+                </h2>
+                <button
+                  className="text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowModal(false)}
+                >
+                  <img
+                    className="w-4 h-4 rounded-full"
+                    src="close.png"
+                    alt="close"
+                  />
+                </button>
+              </div>
+             
               <input
                 type="text"
                 placeholder="Product Name"
@@ -95,7 +107,7 @@ const Dashboard = () => {
                 onChange={(e) => setProductName(e.target.value)}
                 className="border border-gray-300 rounded px-2 py-1 w-auto mb-2 mt-4"
               />
-              {/* Product Price Input */}
+              
               <input
                 type="text"
                 placeholder="Product Price"
@@ -103,7 +115,6 @@ const Dashboard = () => {
                 onChange={(e) => setProductPrice(e.target.value)}
                 className="border border-gray-300 rounded px-2 py-1 w-auto mb-4 mt-4"
               />
-              {/* Save Button */}
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-6 border border-blue-700 rounded w-full"
                 onClick={handleSave}
@@ -115,10 +126,9 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Ürün Listesi */}
       <div className="flex flex-wrap justify-start gap-11">
         {products.map((product) => (
-          <ProductCard product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </div>

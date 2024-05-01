@@ -1,20 +1,26 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "../supaBaseClient";
 
-const initialState = {};
+const initialState = {
+  loading: false,
+  error: null,
+  signUp: null,
+};
 
-export const signUps = createAsyncThunk("auth/signUp", async (values) => {
-  try {
-    const response = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-    });
-    return response;
-  } catch (err) {
-    console.error(err);
-    return err; // veya isteğe bağlı bir hata mesajı döndürülebilir
+export const signUps = createAsyncThunk(
+  "auth/signUp",
+  async (values) => {
+    try {
+      const response = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+      });
+      return response;
+    } catch (err) {
+      console.error(err);
+    }
   }
-});
+);
 
 const SignUpSlice = createSlice({
   name: "sign",
@@ -36,14 +42,17 @@ const SignUpSlice = createSlice({
         };
       })
       .addCase(signUps.rejected, (state, action) => {
+        state.loading = false;
         return {
+          ...state,
           loading: false,
-          error: action.payload.error,
+          error: action.payload,
         };
+       
       });
   },
 });
 
 export const { signUp } = SignUpSlice.actions;
-export const selectsignup = (state) => state.selectsignup;
+export const selectsignup = (state) => state.register;
 export default SignUpSlice.reducer;

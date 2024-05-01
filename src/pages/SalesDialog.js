@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { SaleProduct, AllOrders } from "../redux/salesSlice";
 import { supabase } from "../supaBaseClient";
-import { selectAuth } from "../redux/authSlice";
 
-const SalesDialog = ({ product }) => {
+const SalesDialog = ({ product, onClose }) => {
   const [saleDate, setSaleDate] = useState("");
   const [saleQuantity, setSaleQuantity] = useState(0);
   const dispatch = useDispatch();
+
   const halletSunu = async () => {
     const asdas = await supabase.auth.admin;
   };
@@ -23,11 +23,25 @@ const SalesDialog = ({ product }) => {
     );
 
     dispatch(AllOrders());
+    onClose();
   };
+
+  const handleClose = () => {
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-md w-96 h-80 overflow-y-auto">
-        <h2 className="text-lg font-bold mb-4">Add Sale</h2>
+      <div className="bg-white p-6 rounded-lg shadow-md w-96 h-96 overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold">Add Sale</h2>
+          <button
+            className="text-gray-500 hover:text-gray-700"
+            onClick={handleClose}
+          >
+            <img className="w-4 h-4 rounded-full" src="close.png" alt="close" />
+          </button>
+        </div>
         {/* Product Info */}
         <p>{product.name}</p>
         <p>{product.price} $</p>

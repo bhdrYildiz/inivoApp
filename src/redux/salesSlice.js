@@ -1,4 +1,3 @@
-// Örnek 1: Değişken adını değiştirerek
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "../supaBaseClient";
 
@@ -15,7 +14,6 @@ export const SaleProduct = createAsyncThunk(
         created_at: created_at,
         count: count,
       });
-      console.log(error);
       if (error) throw error;
       return data;
     } catch (error) {
@@ -26,11 +24,12 @@ export const SaleProduct = createAsyncThunk(
 );
 export const AllOrders = createAsyncThunk("/Orders", async () => {
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("sales")
       .select()
-      .gt("count", 10)
+      .gt("count", 0)
       .order("count", { ascending: true });
+
     return data;
   } catch (error) {
     console.error("Hata:", error.message);
@@ -63,7 +62,6 @@ const salesSlice = createSlice({
         };
       })
       .addCase(AllOrders.fulfilled, (state, action) => {
-        console.log(action);
         return {
           ...state,
           orders: action.payload,
